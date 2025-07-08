@@ -17,7 +17,7 @@ function App() {
         <p className='text-2xl text-center'>Сайт временно на техобслуживании.</p>
 
         <div className="flex items-center justify-center mt-10">
-          <CountdownTimer hours={55} />
+          <CountdownTimer targetDate="2025-07-10T18:00:00" />
         </div>
 
         <div className='flex justify-center gap-5'>

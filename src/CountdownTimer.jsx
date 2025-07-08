@@ -1,48 +1,46 @@
 import React, { useState, useEffect } from 'react';
 
-const CountdownTimer = ({ hours }) => {
- 
-
-  useEffect(() => {
-    const targetTime = new Date(new Date().getTime() + hours * 60 * 60 * 1000);
-
-    const interval = setInterval(() => {
-      const newTime = calculateTimeLeft(targetTime);
-      setTimeLeft(newTime);
-
-      if (
-        newTime.hours === 0 &&
-        newTime.minutes === 0 &&
-        newTime.seconds === 0
-      ) {
-        clearInterval(interval);
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [hours]);
-
- 
+const CountdownTimer = ({ targetDate  }) => {
 
   const calculateTimeLeft = (targetDate) => {
     const difference = targetDate - new Date();
 
     if (difference <= 0) {
-      return { hours: 0, minutes: 0, seconds: 0 };
+      return { total: 0, hours: 0, minutes: 0, seconds: 0 };
     }
 
+    const totalHours = Math.floor(difference / (1000 * 60 * 60));
+    const minutes = Math.floor((difference / (1000 * 60)) % 60);
+    const seconds = Math.floor((difference / 1000) % 60);
+
     return {
-      hours: Math.floor((difference / (1000 * 60 * 60))),
-      minutes: Math.floor((difference / (1000 * 60)) % 60),
-      seconds: Math.floor((difference / 1000) % 60),
+      total: difference,
+      hours: totalHours,
+      minutes,
+      seconds,
     };
   };
+  
+  const [timeLeft, setTimeLeft] = useState(() => calculateTimeLeft(new Date(targetDate)));
 
-  const [timeLeft, setTimeLeft] = useState(() => {
-    const now = new Date();
-    const target = new Date(now.getTime() + hours * 60 * 60 * 1000);
-    return calculateTimeLeft(target);
-  });
+  useEffect(() => {
+    const target = new Date(targetDate);
+
+    const interval = setInterval(() => {
+      const updatedTime = calculateTimeLeft(target);
+      setTimeLeft(updatedTime);
+
+      if (updatedTime.total <= 0) {
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [targetDate]);
+  
+  
+ 
+  
 
   const timeUnits = [
     { label: 'часы', value: timeLeft.hours },
